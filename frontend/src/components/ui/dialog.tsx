@@ -63,7 +63,7 @@ export const Dialog: React.FC<DialogProps> = ({
         ref={dialogRef}
         role="dialog"
         aria-modal="true"
-        className="relative z-50 w-full max-w-lg rounded-2xl border border-[var(--border-default)] bg-[var(--surface)] p-8 shadow-xl"
+        className="relative z-50 w-[calc(100vw-2rem)] max-w-lg max-h-[85vh] overflow-y-auto rounded-2xl border border-[var(--border-default)] bg-[var(--surface)] p-5 sm:p-8 shadow-xl mx-auto"
         style={{
           animation: "scale-in 0.2s ease-out",
           boxShadow: "0 8px 40px rgba(0,0,0,0.12)",

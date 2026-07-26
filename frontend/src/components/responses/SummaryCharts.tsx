@@ -146,11 +146,11 @@ function QuestionRow({
         {hasChart ? (
           <div className="space-y-1.5">
             {chartData.map((item) => (
-              <div key={item.name} className="flex items-center gap-3">
-                <span className="w-28 shrink-0 text-[11px] font-medium text-[var(--text-secondary)] truncate text-right">
+              <div key={item.name} className="flex items-center gap-2 sm:gap-3">
+                <span className="w-20 sm:w-28 shrink-0 text-[11px] font-medium text-[var(--text-secondary)] truncate text-right">
                   {item.name}
                 </span>
-                <div className="flex-1 h-5 bg-[var(--surface-muted)] rounded overflow-hidden">
+                <div className="flex-1 min-w-0 h-5 bg-[var(--surface-muted)] rounded overflow-hidden">
                   <div
                     className="h-full rounded transition-all duration-500 ease-out"
                     style={{
@@ -159,7 +159,7 @@ function QuestionRow({
                     }}
                   />
                 </div>
-                <span className="w-14 shrink-0 text-[11px] font-semibold text-[var(--text-muted)] tabular-nums text-right">
+                <span className="w-10 sm:w-14 shrink-0 text-[11px] font-semibold text-[var(--text-muted)] tabular-nums text-right">
                   {item.pct}%
                 </span>
               </div>

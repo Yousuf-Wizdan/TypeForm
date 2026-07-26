@@ -37,6 +37,8 @@ import {
   ArrowRight,
   Loader2,
   Sparkles,
+  Menu,
+  X,
 } from "lucide-react";
 import { QuestionType } from "@/lib/types";
 import { addQuestion } from "@/lib/api";
@@ -165,6 +167,7 @@ export default function DashboardPage() {
   const [templateCategory, setTemplateCategory] = useState<string>("all");
   const [loadingTemplateId, setLoadingTemplateId] = useState<string | null>(null);
   const [seeding, setSeeding] = useState(false);
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
   const loadForms = async () => {
     try {
@@ -304,110 +307,56 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-[var(--background)] flex">
-      {/* Sidebar */}
+      {/* Desktop Sidebar */}
       <aside className="hidden lg:flex flex-col w-[240px] shrink-0 border-r border-[var(--border-default)] bg-[var(--surface)] h-screen sticky top-0">
-        {/* Logo */}
-        <div className="px-5 py-6">
-          <Link href="/" className="flex items-center gap-2.5">
-            <svg
-              width="28"
-              height="28"
-              viewBox="0 0 32 32"
-              fill="none"
-              className="shrink-0"
-            >
-              <rect width="32" height="32" rx="8" fill="#7c5cfc" />
-              <path
-                d="M10 12h5v8h-5zM17 10h5v10h-5z"
-                fill="white"
-                fillOpacity="0.9"
-              />
-            </svg>
-            <span className="text-base font-bold tracking-tight text-[var(--text-primary)]">
-              typeform
-            </span>
-          </Link>
-        </div>
-
-        {/* Nav */}
-        <nav className="flex-1 px-3 space-y-1">
-          <button
-            onClick={() => setActiveView("forms")}
-            className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 w-full text-left ${
-              activeView === "forms"
-                ? "bg-[var(--brand-surface)] text-[var(--brand-primary)]"
-                : "text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--surface-hover)]"
-            }`}
-          >
-            <LayoutDashboard className="h-4 w-4" strokeWidth={1.5} />
-            My forms
-          </button>
-          <button
-            onClick={() => setActiveView("templates")}
-            className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 w-full text-left ${
-              activeView === "templates"
-                ? "bg-[var(--brand-surface)] text-[var(--brand-primary)]"
-                : "text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--surface-hover)]"
-            }`}
-          >
-            <FolderOpen className="h-4 w-4" strokeWidth={1.5} />
-            Templates
-          </button>
-        </nav>
-
-        {/* Bottom actions */}
-        <div className="px-3 pb-6 space-y-1">
-          <div className="h-px bg-[var(--border-subtle)] mb-4 mx-3" />
-          {displayUser && (
-            <div className="flex items-center gap-2.5 px-3 py-2 mb-1">
-              {displayUser.avatar ? (
-                <img
-                  src={displayUser.avatar}
-                  alt={displayUser.name}
-                  className="h-7 w-7 rounded-full object-cover shrink-0"
-                />
-              ) : (
-                <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[var(--brand-primary)] text-white text-xs font-semibold shrink-0">
-                  {displayUser.name.charAt(0).toUpperCase()}
-                </div>
-              )}
-              <div className="min-w-0">
-                <p className="text-xs font-medium text-[var(--text-primary)] truncate">
-                  {displayUser.name}
-                </p>
-                {displayUser.email && (
-                  <p className="text-[11px] text-[var(--text-muted)] truncate">
-                    {displayUser.email}
-                  </p>
-                )}
-              </div>
-            </div>
-          )}
-          <button
-            onClick={handleLogout}
-            className="flex w-full items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-[var(--text-muted)] hover:text-red-500 hover:bg-red-50 transition-all duration-150"
-          >
-            <LogOut className="h-4 w-4" strokeWidth={1.5} />
-            Sign out
-          </button>
-          <button
-            onClick={handleSeed}
-            disabled={seeding}
-            className="flex w-full items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-[var(--text-muted)] hover:text-[var(--brand-primary)] hover:bg-[var(--brand-surface)] transition-all duration-150 disabled:opacity-50"
-          >
-            <Sparkles className={`h-4 w-4 ${seeding ? "animate-spin" : ""}`} strokeWidth={1.5} />
-            {seeding ? "Seeding..." : "Seed data"}
-          </button>
-        </div>
+        <DashboardSidebar
+          activeView={activeView}
+          setActiveView={setActiveView}
+          displayUser={displayUser}
+          handleLogout={handleLogout}
+          handleSeed={handleSeed}
+          seeding={seeding}
+        />
       </aside>
+
+      {/* Mobile sidebar drawer */}
+      {mobileSidebarOpen && (
+        <>
+          <div className="fixed inset-0 z-40 bg-black/40 lg:hidden" onClick={() => setMobileSidebarOpen(false)} />
+          <div className="fixed inset-y-0 left-0 z-50 w-72 lg:hidden shadow-2xl animate-slide-in-left">
+            <div className="flex h-full flex-col bg-[var(--surface)]">
+              <div className="flex items-center justify-between px-5 py-4 border-b border-[var(--border-default)]">
+                <span className="text-base font-bold tracking-tight text-[var(--text-primary)]">typeform</span>
+                <button onClick={() => setMobileSidebarOpen(false)} className="p-1.5 rounded-lg hover:bg-[var(--surface-hover)]">
+                  <X className="h-4 w-4 text-[var(--text-muted)]" />
+                </button>
+              </div>
+              <DashboardSidebar
+                activeView={activeView}
+                setActiveView={(v) => { setActiveView(v); setMobileSidebarOpen(false); }}
+                displayUser={displayUser}
+                handleLogout={handleLogout}
+                handleSeed={handleSeed}
+                seeding={seeding}
+              />
+            </div>
+          </div>
+        </>
+      )}
 
       {/* Main content */}
       <div className="flex-1 min-w-0">
         {/* Top bar */}
         <header className="sticky top-0 z-40 bg-[var(--background)]/90 backdrop-blur-xl border-b border-[var(--border-default)]">
-          <div className="flex items-center justify-between h-[64px] px-6 lg:px-10 gap-4">
-            <div className="flex items-center gap-4 flex-1 min-w-0">
-              <h1 className="text-xl font-bold text-[var(--text-primary)] tracking-tight shrink-0">
+          <div className="flex items-center justify-between h-[64px] px-4 lg:px-10 gap-3">
+            <div className="flex items-center gap-3 flex-1 min-w-0">
+              <button
+                onClick={() => setMobileSidebarOpen(true)}
+                className="lg:hidden flex h-9 w-9 items-center justify-center rounded-xl text-[var(--text-muted)] hover:bg-[var(--surface)] hover:text-[var(--text-secondary)] transition-all shrink-0"
+              >
+                <Menu className="h-5 w-5" />
+              </button>
+              <h1 className="text-lg sm:text-xl font-bold text-[var(--text-primary)] tracking-tight shrink-0">
                 {activeView === "forms" ? "My forms" : "Templates"}
               </h1>
               {activeView === "forms" && (
@@ -652,6 +601,95 @@ export default function DashboardPage() {
         onOpenChange={setGoogleModalOpen}
         onSuccess={() => {}}
       />
+    </div>
+  );
+}
+
+function DashboardSidebar({
+  activeView,
+  setActiveView,
+  displayUser,
+  handleLogout,
+  handleSeed,
+  seeding,
+}: {
+  activeView: "forms" | "templates";
+  setActiveView: (v: "forms" | "templates") => void;
+  displayUser: { name: string; email: string; avatar: string } | null;
+  handleLogout: () => void;
+  handleSeed: () => void;
+  seeding: boolean;
+}) {
+  return (
+    <div className="flex-1 flex flex-col overflow-y-auto">
+      <div className="hidden lg:block px-5 py-6">
+        <Link href="/" className="flex items-center gap-2.5">
+          <svg width="28" height="28" viewBox="0 0 32 32" fill="none" className="shrink-0">
+            <rect width="32" height="32" rx="8" fill="#7c5cfc" />
+            <path d="M10 12h5v8h-5zM17 10h5v10h-5z" fill="white" fillOpacity="0.9" />
+          </svg>
+          <span className="text-base font-bold tracking-tight text-[var(--text-primary)]">typeform</span>
+        </Link>
+      </div>
+
+      <nav className="flex-1 px-3 space-y-1">
+        <button
+          onClick={() => setActiveView("forms")}
+          className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 w-full text-left ${
+            activeView === "forms"
+              ? "bg-[var(--brand-surface)] text-[var(--brand-primary)]"
+              : "text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--surface-hover)]"
+          }`}
+        >
+          <LayoutDashboard className="h-4 w-4" strokeWidth={1.5} />
+          My forms
+        </button>
+        <button
+          onClick={() => setActiveView("templates")}
+          className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 w-full text-left ${
+            activeView === "templates"
+              ? "bg-[var(--brand-surface)] text-[var(--brand-primary)]"
+              : "text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--surface-hover)]"
+          }`}
+        >
+          <FolderOpen className="h-4 w-4" strokeWidth={1.5} />
+          Templates
+        </button>
+      </nav>
+
+      <div className="px-3 pb-6 space-y-1">
+        <div className="h-px bg-[var(--border-subtle)] mb-4 mx-3" />
+        {displayUser && (
+          <div className="flex items-center gap-2.5 px-3 py-2 mb-1">
+            {displayUser.avatar ? (
+              <img src={displayUser.avatar} alt={displayUser.name} className="h-7 w-7 rounded-full object-cover shrink-0" />
+            ) : (
+              <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[var(--brand-primary)] text-white text-xs font-semibold shrink-0">
+                {displayUser.name.charAt(0).toUpperCase()}
+              </div>
+            )}
+            <div className="min-w-0">
+              <p className="text-xs font-medium text-[var(--text-primary)] truncate">{displayUser.name}</p>
+              {displayUser.email && <p className="text-[11px] text-[var(--text-muted)] truncate">{displayUser.email}</p>}
+            </div>
+          </div>
+        )}
+        <button
+          onClick={handleLogout}
+          className="flex w-full items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-[var(--text-muted)] hover:text-red-500 hover:bg-red-50 transition-all duration-150"
+        >
+          <LogOut className="h-4 w-4" strokeWidth={1.5} />
+          Sign out
+        </button>
+        <button
+          onClick={handleSeed}
+          disabled={seeding}
+          className="flex w-full items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-[var(--text-muted)] hover:text-[var(--brand-primary)] hover:bg-[var(--brand-surface)] transition-all duration-150 disabled:opacity-50"
+        >
+          <Sparkles className={`h-4 w-4 ${seeding ? "animate-spin" : ""}`} strokeWidth={1.5} />
+          {seeding ? "Seeding..." : "Seed data"}
+        </button>
+      </div>
     </div>
   );
 }

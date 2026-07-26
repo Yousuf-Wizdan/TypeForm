@@ -146,7 +146,7 @@ export const CanvasPreview: React.FC<CanvasPreviewProps> = ({
 
   return (
     <main
-      className="flex-1 flex flex-col justify-center p-8 lg:p-16 overflow-y-auto"
+      className="flex-1 flex flex-col justify-center p-4 sm:p-8 lg:p-16 overflow-y-auto"
       style={{ backgroundColor: bg }}
     >
       <div className="max-w-xl w-full mx-auto space-y-8">
@@ -164,7 +164,7 @@ export const CanvasPreview: React.FC<CanvasPreviewProps> = ({
           value={question.title}
           placeholder="Type your question here..."
           onChange={(e) => onUpdateQuestion({ title: e.target.value })}
-          className="w-full text-2xl lg:text-3xl font-bold bg-transparent border-b-2 border-transparent hover:border-zinc-200 focus:outline-none py-2 transition-colors"
+          className="w-full text-xl sm:text-2xl lg:text-3xl font-bold bg-transparent border-b-2 border-transparent hover:border-zinc-200 focus:outline-none py-2 transition-colors"
           style={{ color: text, caretColor: accent }}
         />
 
@@ -366,13 +366,13 @@ export const CanvasPreview: React.FC<CanvasPreviewProps> = ({
           )}
 
           {question.type === "rating" && (
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
               {Array.from({
                 length: question.properties.rating_scale || 5,
               }).map((_, i) => (
                 <div
                   key={i}
-                  className="flex h-12 w-12 items-center justify-center rounded-xl border shadow-sm font-semibold text-base"
+                  className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-xl border shadow-sm font-semibold text-sm sm:text-base"
                   style={{
                     borderColor: `${text}15`,
                     backgroundColor: `${text}05`,
@@ -388,7 +388,7 @@ export const CanvasPreview: React.FC<CanvasPreviewProps> = ({
 
           {question.type === "file_upload" && (
             <div
-              className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed p-10 text-center"
+              className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed p-6 sm:p-10 text-center"
               style={{
                 borderColor: `${text}20`,
                 backgroundColor: `${text}05`,

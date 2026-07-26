@@ -147,6 +147,24 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
+@keyframes slide-in-left-full {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slide-in-right-full {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
 .animate-fade-in {
   animation: fade-in 0.4s ease-out forwards;
 }
@@ -157,4 +175,12 @@ h1, h2, h3, h4, h5, h6 {
 
 .animate-scale-in {
   animation: scale-in 0.25s ease-out forwards;
+}
+
+.animate-slide-in-left {
+  animation: slide-in-left-full 0.25s ease-out forwards;
+}
+
+.animate-slide-in-right {
+  animation: slide-in-right-full 0.25s ease-out forwards;
 }

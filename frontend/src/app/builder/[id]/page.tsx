@@ -16,7 +16,7 @@ import { QuestionList } from "@/components/builder/QuestionList";
 import { CanvasPreview } from "@/components/builder/CanvasPreview";
 import { RightInspector } from "@/components/builder/RightInspector";
 import { RespondentFlow } from "@/components/respondent/RespondentFlow";
-import { Loader2, X } from "lucide-react";
+import { Loader2, X, List, Settings } from "lucide-react";
 
 export default function BuilderPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params);
@@ -28,6 +28,8 @@ export default function BuilderPage({ params }: { params: Promise<{ id: string }
   const [selectedQuestionId, setSelectedQuestionId] = useState<string | "thank_you" | null>(null);
   const [activeHeaderTab, setActiveHeaderTab] = useState<"create" | "logic" | "theme" | "results">("create");
   const [previewOpen, setPreviewOpen] = useState(false);
+  const [mobileLeftOpen, setMobileLeftOpen] = useState(false);
+  const [mobileRightOpen, setMobileRightOpen] = useState(false);
 
   useEffect(() => {
     formRef.current = form;
@@ -182,16 +184,36 @@ export default function BuilderPage({ params }: { params: Promise<{ id: string }
         onOpenPreview={() => setPreviewOpen(true)}
       />
 
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-1 overflow-hidden relative">
 
-        <QuestionList
-          questions={form.questions}
-          selectedQuestionId={selectedQuestionId}
-          onSelectQuestion={setSelectedQuestionId}
-          onAddQuestion={handleAddQuestion}
-          onDeleteQuestion={handleDeleteQuestion}
-          onReorder={handleReorderQuestions}
-        />
+        {/* Desktop left sidebar */}
+        <div className="hidden lg:block h-full">
+          <QuestionList
+            questions={form.questions}
+            selectedQuestionId={selectedQuestionId}
+            onSelectQuestion={setSelectedQuestionId}
+            onAddQuestion={handleAddQuestion}
+            onDeleteQuestion={handleDeleteQuestion}
+            onReorder={handleReorderQuestions}
+          />
+        </div>
+
+        {/* Mobile left drawer */}
+        {mobileLeftOpen && (
+          <>
+            <div className="fixed inset-0 z-40 bg-black/40 lg:hidden" onClick={() => setMobileLeftOpen(false)} />
+            <div className="fixed inset-y-0 left-0 z-50 w-72 lg:hidden shadow-2xl animate-slide-in-left">
+              <QuestionList
+                questions={form.questions}
+                selectedQuestionId={selectedQuestionId}
+                onSelectQuestion={(id) => { setSelectedQuestionId(id); setMobileLeftOpen(false); }}
+                onAddQuestion={handleAddQuestion}
+                onDeleteQuestion={handleDeleteQuestion}
+                onReorder={handleReorderQuestions}
+              />
+            </div>
+          </>
+        )}
 
         <CanvasPreview
           question={selectedQuestion}
@@ -203,17 +225,60 @@ export default function BuilderPage({ params }: { params: Promise<{ id: string }
           onUpdateThankYouScreen={handleUpdateThankYouScreen}
         />
 
-        <RightInspector
-          question={selectedQuestion}
-          allQuestions={form.questions}
-          theme={form.theme}
-          thankYouScreen={form.thank_you_screen}
-          activeTab={activeHeaderTab}
-          onUpdateQuestion={handleUpdateQuestion}
-          onUpdateTheme={handleUpdateTheme}
-          onUpdateThankYouScreen={handleUpdateThankYouScreen}
-          onTabChange={setActiveHeaderTab}
-        />
+        {/* Desktop right sidebar */}
+        <div className="hidden lg:block h-full">
+          <RightInspector
+            question={selectedQuestion}
+            allQuestions={form.questions}
+            theme={form.theme}
+            thankYouScreen={form.thank_you_screen}
+            activeTab={activeHeaderTab}
+            onUpdateQuestion={handleUpdateQuestion}
+            onUpdateTheme={handleUpdateTheme}
+            onUpdateThankYouScreen={handleUpdateThankYouScreen}
+            onTabChange={setActiveHeaderTab}
+          />
+        </div>
+
+        {/* Mobile right drawer */}
+        {mobileRightOpen && (
+          <>
+            <div className="fixed inset-0 z-40 bg-black/40 lg:hidden" onClick={() => setMobileRightOpen(false)} />
+            <div className="fixed inset-y-0 right-0 z-50 w-80 lg:hidden shadow-2xl animate-slide-in-right">
+              <RightInspector
+                question={selectedQuestion}
+                allQuestions={form.questions}
+                theme={form.theme}
+                thankYouScreen={form.thank_you_screen}
+                activeTab={activeHeaderTab}
+                onUpdateQuestion={handleUpdateQuestion}
+                onUpdateTheme={handleUpdateTheme}
+                onUpdateThankYouScreen={handleUpdateThankYouScreen}
+                onTabChange={setActiveHeaderTab}
+              />
+            </div>
+          </>
+        )}
+
+        {/* Mobile floating toggle buttons */}
+        <div className="lg:hidden fixed bottom-5 left-4 z-30 flex gap-2">
+          <button
+            onClick={() => setMobileLeftOpen(!mobileLeftOpen)}
+            className="flex h-11 w-11 items-center justify-center rounded-full bg-[var(--brand-primary)] text-white shadow-lg hover:bg-[var(--brand-primary-hover)] transition-all active:scale-95"
+            title="Questions"
+          >
+            <List className="h-5 w-5" />
+          </button>
+        </div>
+        <div className="lg:hidden fixed bottom-5 right-4 z-30 flex gap-2">
+          <button
+            onClick={() => setMobileRightOpen(!mobileRightOpen)}
+            className="flex h-11 w-11 items-center justify-center rounded-full bg-[var(--brand-primary)] text-white shadow-lg hover:bg-[var(--brand-primary-hover)] transition-all active:scale-95"
+            title="Settings & Design"
+          >
+            <Settings className="h-5 w-5" />
+          </button>
+        </div>
 
       </div>
 

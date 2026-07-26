@@ -81,7 +81,7 @@ export const FormCard: React.FC<FormCardProps> = ({
                 className="fixed inset-0 z-10"
                 onClick={() => setMenuOpen(false)}
               />
-              <div className="absolute right-0 top-9 z-20 w-44 rounded-xl border border-[var(--border-strong)] bg-[var(--surface)] p-1.5 shadow-lg">
+              <div className="absolute right-0 top-9 z-20 w-44 rounded-xl border border-[var(--border-strong)] bg-[var(--surface)] p-1.5 shadow-lg max-[400px]:left-0 max-[400px]:right-auto">
                 {[
                   {
                     icon: FileEdit,
