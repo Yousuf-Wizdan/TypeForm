@@ -349,25 +349,17 @@ export const RespondentFlow: React.FC<RespondentFlowProps> = ({ form }) => {
                 {ty.button_text || "Continue"} <ArrowRight className="h-5 w-5" />
               </a>
             ) : (
-              <button
-                onClick={() => window.location.reload()}
+              <a
+                href="https://type-form-pearl.vercel.app"
+                target="_blank"
+                rel="noreferrer"
                 className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl text-white font-semibold shadow-lg text-base hover:opacity-90 transition-all hover:scale-[1.02] active:scale-[0.98]"
                 style={{ backgroundColor: theme.primary_color }}
               >
-                {ty.button_text || "Submit another response"}
-              </button>
+                Create your own Typeform <ArrowRight className="h-5 w-5" />
+              </a>
             )}
           </div>
-
-          <a
-            href="https://type-form-pearl.vercel.app"
-            target="_blank"
-            rel="noreferrer"
-            className="inline-block text-sm font-medium hover:underline"
-            style={{ color: theme.primary_color }}
-          >
-            Create your own Typeform &rarr;
-          </a>
 
           <p className="text-xs" style={{ opacity: 0.3 }}>
             Powered by Typeform Clone
