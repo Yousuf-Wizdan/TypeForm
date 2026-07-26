@@ -14,7 +14,7 @@ def seed_database(force: bool = False, creator_id: str = "default_creator"):
 
     if existing_count > 0:
         if not force:
-            return
+            return False
         db = SessionLocal()
         try:
             user_forms = db.query(Form).filter(Form.creator_id == creator_id).all()
@@ -263,6 +263,7 @@ def seed_database(force: bool = False, creator_id: str = "default_creator"):
         db.commit()
 
         print("Successfully seeded SQLite database with 3 sample forms and 20 total responses!")
+        return True
 
     finally:
         db.close()

@@ -57,9 +57,10 @@ app.include_router(api_router)
 
 @app.on_event("startup")
 def startup_event():
-    db = next(get_db())
     try:
+        db = next(get_db())
         count = db.query(models.Form).count()
+        db.close()
         if count == 0:
             print("Empty database detected. Auto-seeding initial forms...")
             seed_database()
@@ -76,7 +77,7 @@ def root():
 def trigger_seed():
     try:
         result = seed_database(force=True)
-        if result is None:
+        if result is False:
             return {"message": "Database already has data."}
         return {"message": "Database re-seeded successfully with realistic forms and responses!"}
     except Exception:
