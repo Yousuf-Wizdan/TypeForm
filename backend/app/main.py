@@ -26,10 +26,20 @@ app = FastAPI(
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
-CORS_ORIGINS_RAW = os.getenv("CORS_ORIGINS") or os.getenv("FRONTEND_URL")
-if CORS_ORIGINS_RAW:
-    CORS_ORIGINS = [o.strip() for o in CORS_ORIGINS_RAW.split(",") if o.strip()]
-    ALLOW_CREDENTIALS = True
+CORS_ORIGINS_RAW = os.getenv("CORS_ORIGINS") or ""
+FRONTEND_URL = os.getenv("FRONTEND_URL") or ""
+
+origins = set()
+for o in CORS_ORIGINS_RAW.split(","):
+    o = o.strip()
+    if o:
+        origins.add(o)
+if FRONTEND_URL:
+    origins.add(FRONTEND_URL.strip())
+
+if origins:
+    CORS_ORIGINS = list(origins)
+    ALLOW_CREDENTIALS = False if "*" in CORS_ORIGINS else True
 else:
     CORS_ORIGINS = ["*"]
     ALLOW_CREDENTIALS = False
