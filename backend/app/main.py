@@ -1,5 +1,5 @@
 import os
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
@@ -73,10 +73,7 @@ def root():
 
 
 @app.post("/api/seed")
-def trigger_seed(request: Request):
-    host = request.client.host if request.client else ""
-    if host not in ("127.0.0.1", "localhost", "::1"):
-        raise HTTPException(status_code=403, detail="Seed endpoint only available locally")
+def trigger_seed():
     try:
         result = seed_database(force=True)
         if result is None:
