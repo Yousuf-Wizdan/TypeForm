@@ -31,11 +31,11 @@ FRONTEND_URL = os.getenv("FRONTEND_URL") or ""
 
 origins = set()
 for o in CORS_ORIGINS_RAW.split(","):
-    o = o.strip()
+    o = o.strip().rstrip("/")
     if o:
         origins.add(o)
 if FRONTEND_URL:
-    origins.add(FRONTEND_URL.strip())
+    origins.add(FRONTEND_URL.strip().rstrip("/"))
 
 if origins:
     CORS_ORIGINS = list(origins)
