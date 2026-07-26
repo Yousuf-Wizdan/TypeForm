@@ -2,29 +2,41 @@
 
 A high-fidelity, functional clone of **Typeform** replicating Typeform's signature design system, 3-column form builder, 1-question-at-a-time conversational respondent experience, logic branching, theme customizer, response analytics, and CSV export.
 
-![Typeform Clone Banner](https://img.shields.io/badge/Stack-Next.js%2014%20%7C%20FastAPI%20%7C%20SQLite-black?style=for-the-badge)
+![Typeform Clone Banner](https://img.shields.io/badge/Stack-Next.js%2015%20%7C%20FastAPI%20%7C%20SQLite-black?style=for-the-badge)
+
+---
+
+## Live Demo
+
+| Service | URL |
+|---------|-----|
+| **Frontend** | [https://type-form-pearl.vercel.app](https://type-form-pearl.vercel.app) |
+| **Backend API** | [https://typeform-8dss.onrender.com](https://typeform-8dss.onrender.com) |
+
+> **⚠️ First-time setup**: After opening the dashboard, click the **"Reset Demo Data"** button in the top bar to seed sample forms with pre-filled responses. The Render free-tier database is ephemeral and resets on each deployment.
 
 ---
 
 ## Technical Stack
 
 ### Frontend
-- **Framework**: Next.js 14/15 (App Router, TypeScript)
-- **UI Components**: **shadcn/ui** (Dialog, Tabs, Switch, Card, Progress, Badge, Button, Input, Textarea)
+- **Framework**: Next.js 15 (App Router, TypeScript)
+- **UI Components**: shadcn/ui (Dialog, Tabs, Switch, Card, Progress, Badge, Button, Input, Textarea)
 - **Styling**: Tailwind CSS with custom Typeform color palettes & design tokens
 - **Animations**: Framer Motion (vertical slide-up/down transitions, smooth fades)
 - **Drag-and-Drop**: `@dnd-kit/core` & `@dnd-kit/sortable` (for question reordering)
 - **Icons**: Lucide React
-- **Authentication**: Clerk Auth (`@clerk/nextjs`) for Creator Auth (with automatic local dev fallback)
+- **Authentication**: Clerk Auth (`@clerk/nextjs`) for Creator Auth
 - **Visual Analytics**: Recharts
 - **Celebration Effects**: `canvas-confetti`
 
 ### Backend
-- **Framework**: Python 3.10+ with **FastAPI**
+- **Framework**: Python 3.12+ with **FastAPI**
 - **ORM**: SQLAlchemy 2.0+
 - **Data Validation**: Pydantic v2
 - **Database**: SQLite (`typeform.db`)
 - **Server**: Uvicorn
+- **Rate Limiting**: SlowAPI
 
 ---
 
@@ -32,28 +44,28 @@ A high-fidelity, functional clone of **Typeform** replicating Typeform's signatu
 
 ```mermaid
 graph TD
-    subgraph Frontend ["Next.js (TypeScript + Tailwind CSS)"]
-        Dashboard["Dashboard (/)\nMy Forms, Status Badges & Metrics"]
+    subgraph Frontend ["Vercel — Next.js (TypeScript + Tailwind CSS)"]
+        Dashboard["Dashboard (/dashboard)\nMy Forms, Templates, Stats"]
         Builder["3-Column Builder (/builder/[id])\nDrag & Drop, Live Canvas, Logic & Themes"]
         Respondent["Respondent Flow (/to/[shareId])\nConversational 1-Q-at-a-time, Hotkeys & Animations"]
         Analytics["Results View (/responses/[id])\nSummary Charts, Submissions Table & CSV Export"]
     end
 
-    subgraph Backend ["FastAPI Backend (/backend)"]
+    subgraph Backend ["Render — FastAPI Backend (/backend)"]
         FormsAPI["Forms Router (/api/forms)"]
         QuestionsAPI["Questions Router (/api/questions)"]
         PublicAPI["Public Router (/api/public)"]
         ResponsesAPI["Responses Router (/api/forms/{id}/responses)"]
     end
 
-    subgraph Database ["SQLite Database"]
+    subgraph Database ["Render — SQLite"]
         DB[(typeform.db)]
     end
 
-    Dashboard --> FormsAPI
-    Builder --> QuestionsAPI
-    Respondent --> PublicAPI
-    Analytics --> ResponsesAPI
+    Dashboard -->|"NEXT_PUBLIC_API_URL"| FormsAPI
+    Builder -->|Cross-origin| QuestionsAPI
+    Respondent -->|Cross-origin| PublicAPI
+    Analytics -->|Cross-origin| ResponsesAPI
     
     FormsAPI --> DB
     QuestionsAPI --> DB
@@ -66,7 +78,7 @@ graph TD
 ## Database Schema
 
 ```mermaid
-erdiagram
+erDiagram
     FORMS ||--o{ QUESTIONS : contains
     FORMS ||--o{ RESPONSES : receives
     RESPONSES ||--o{ ANSWERS : includes
@@ -118,9 +130,11 @@ erdiagram
 
 ## Key Features
 
-1. **Workspace Dashboard (`/`)**:
+1. **Workspace Dashboard (`/dashboard`)**:
    - Creator forms list with status badges (`Draft` / `Published`), total response counter, search bar, duplicate, delete, and publish toggles.
    - One-click **Reset Demo Data** button that re-seeds the database with pre-built realistic forms and responses.
+   - Template gallery with 4 pre-built templates (Feedback, Hiring, Events, Leads).
+   - Sidebar navigation with light/dark theme toggle.
 
 2. **3-Column Typeform Builder (`/builder/[id]`)**:
    - **Left Panel**: Question list with drag-and-drop handles (`@dnd-kit`), type badges, and `+ Add Question` popover featuring 9 question types.
@@ -128,13 +142,15 @@ erdiagram
    - **Right Inspector**:
      - *Question Settings*: Required toggle switch, help text, rating scale max (1-5 or 1-10).
      - *Logic Jumps*: Conditional branching rule builder (`IF Answer IS "Yes", THEN JUMP TO Q4`).
-     - *Design Theme*: Theme presets (Clean Light, Modern Dark, Warm Sunset, Ocean Blue, Neon Violet) + Custom Color Pickers.
-     - *Thank You Screen*: Customizable headline, description, and button text.
+     - *Design Theme*: Theme presets (Clean Light, Modern Dark, Warm Sunset, Ocean Blue, Warm White) + Custom Color Pickers.
 
 3. **Signature Respondent Experience (`/to/[shareId]`)**:
    - Fullscreen distraction-free layout with dynamic background theme.
+   - **Welcome screen** with form title and description.
    - Conversational **1-question-at-a-time** experience.
+   - **Typewriter text animation** on question titles.
    - Framer Motion vertical slide-up/down transitions.
+   - **Progress dots** at top of screen.
    - **Keyboard Navigation**:
      - `Enter` / `Ctrl + Enter` to advance
      - `A`, `B`, `C`, `D` letter keys for multiple choice
@@ -143,16 +159,16 @@ erdiagram
      - `Up` and `Down` arrow keys to navigate questions
    - Real-time client & server validation with error shake alerts.
    - Live logic jump evaluation.
-   - Submission fireworks burst with `canvas-confetti` + Thank You screen.
+   - Submission fireworks burst with `canvas-confetti` + customizable Thank You screen.
 
 4. **Results & Analytics (`/responses/[id]`)**:
-   - **Summary Tab**: Total submissions, completion rate, average completion time, and visual bar charts for choice/rating questions.
-   - **Responses Table Tab**: Submission table with submission date, duration, status, and full detail view drawer.
+   - **Insights Tab**: Total submissions, completion rate, average completion time, and horizontal bar charts for choice/rating questions.
+   - **Responses Tab**: Submission table with date, duration, status, and full detail view drawer.
    - **Instant CSV Export**: One-click CSV export download.
 
 ---
 
-## API Documentation Overview
+## API Documentation
 
 | Method | Endpoint | Description |
 | :--- | :--- | :--- |
@@ -176,7 +192,7 @@ erdiagram
 
 ---
 
-## Local Setup & Quick Start Guide
+## Local Setup & Quick Start
 
 ### Prerequisites
 - Node.js (v18+) & npm
@@ -200,10 +216,52 @@ npm run dev
 ```
 *The Next.js web app starts on `http://localhost:3000`.*
 
+### Environment Variables
+
+**Backend** (`backend/.env`):
+```env
+DATABASE_URL=sqlite:///./typeform.db
+SECRET_KEY=your_secret_key_here
+CORS_ORIGINS=http://localhost:3000,http://127.0.0.1:3000
+PORT=8000
+```
+
+**Frontend** (`frontend/.env.local`):
+```env
+NEXT_PUBLIC_API_URL=http://127.0.0.1:8000/api
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_your_key_here
+CLERK_SECRET_KEY=sk_test_your_secret_here
+```
+
+---
+
+## Deployment
+
+### Production Architecture
+- **Frontend**: Deployed on [Vercel](https://vercel.com) — automatic CI/CD from `master` branch
+- **Backend**: Deployed on [Render](https://render.com) — automatic CI/CD from `master` branch
+- **Communication**: Cross-origin via `NEXT_PUBLIC_API_URL` and `CORS_ORIGINS`/`FRONTEND_URL` env vars
+
+### Render (Backend)
+Root directory: `backend`
+- Build: `pip install -r requirements.txt`
+- Start: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
+- Env vars: `CORS_ORIGINS`, `FRONTEND_URL`, `SECRET_KEY`
+
+### Vercel (Frontend)
+Root directory: `frontend`
+- Framework: Next.js (auto-detected)
+- Env var: `NEXT_PUBLIC_API_URL=https://typeform-8dss.onrender.com/api`
+
+Configuration files: `render.yaml` (root), `frontend/vercel.json`
+
 ---
 
 ## Assumptions & Design Decisions
 
-1. **Creator Authentication**: Clerk Auth is integrated for Creator routes (`/`, `/builder/[id]`, `/responses/[id]`). If Clerk keys are omitted in `.env.local`, a default creator fallback mode activates seamlessly so evaluators can run the app without external account setup.
-2. **Public Respondent Flow**: The public form filling URL (`/to/[shareId]`) is completely open and requires no authentication, allowing anyone to fill published forms smoothly.
-3. **Pre-seeded Demo Data**: 3 realistic pre-built forms (Product CSAT, Tech Summit Registration, Employee Pulse) with existing responses and logic rules are populated automatically.
+1. **Creator Authentication**: Clerk Auth is integrated for Creator routes (`/dashboard`, `/builder/[id]`, `/responses/[id]`). All forms share a `default_creator` namespace so demo seed data is visible to any authenticated user. No per-user data isolation.
+2. **Public Respondent Flow**: The public form filling URL (`/to/[shareId]`) is completely open and requires no authentication.
+3. **Ephemeral Database**: Render's free-tier SQLite database resets on each deployment. Use the **"Reset Demo Data"** button on the dashboard to re-populate sample forms.
+4. **File Upload**: The file upload question type stores a placeholder filename only — no persistent file storage is implemented. This is intentional for the demo scope.
+5. **No Database Migrations**: Tables are auto-created on startup via SQLAlchemy's `create_all()`. A production system would use Alembic for versioned migrations.
+6. **CORS**: Configured via environment variables to allow cross-origin requests between Vercel (frontend) and Render (backend). Falls back to `*` when no origins are configured.
