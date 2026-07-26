@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
+import Link from "next/link";
 import { PublicForm, Question } from "@/lib/types";
 import { submitPublicResponse } from "@/lib/api";
 import { motion, AnimatePresence } from "framer-motion";
@@ -138,7 +139,7 @@ export const RespondentFlow: React.FC<RespondentFlowProps> = ({ form }) => {
 
     try {
       const completionTimeSeconds = Math.round((Date.now() - startTime) / 1000);
-      const payloadAnswers = Object.entries(answers).map(([qId, val]) => ({
+      const payloadAnswers = Object.entries(answersRef.current).map(([qId, val]) => ({
         question_id: qId,
         answer_value: val
       }));
@@ -159,11 +160,13 @@ export const RespondentFlow: React.FC<RespondentFlowProps> = ({ form }) => {
     } finally {
       setIsSubmitting(false);
     }
-  }, [isSubmitting, startTime, answers, form.share_id]);
+  }, [isSubmitting, startTime, form.share_id]);
 
   const handleNext = useCallback((overrideAnswer?: any) => {
     if (overrideAnswer === undefined) {
       if (!validateCurrentQuestion()) return;
+    } else if (currentQuestion) {
+      answersRef.current = { ...answersRef.current, [currentQuestion.id]: overrideAnswer };
     }
 
     const nextIdx = getNextIndex(overrideAnswer);
@@ -173,7 +176,7 @@ export const RespondentFlow: React.FC<RespondentFlowProps> = ({ form }) => {
       setDirection("down");
       setCurrentIndex(nextIdx);
     }
-  }, [validateCurrentQuestion, getNextIndex, totalSteps, handleSubmit]);
+  }, [validateCurrentQuestion, getNextIndex, totalSteps, currentQuestion, handleSubmit]);
 
   const handlePrev = useCallback(() => {
     if (currentIndex > 0) {
@@ -357,9 +360,9 @@ export const RespondentFlow: React.FC<RespondentFlowProps> = ({ form }) => {
             )}
           </div>
 
-          <p className="text-xs" style={{ opacity: 0.3 }}>
+          <Link href="/" className="text-xs hover:underline" style={{ opacity: 0.3 }}>
             Powered by Typeform Clone
-          </p>
+          </Link>
         </motion.div>
       </div>
     );
