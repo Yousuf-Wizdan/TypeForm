@@ -59,7 +59,6 @@ next-env.d.ts
 *.swp
 *.swo
 *~
-start.sh
 
 # Dev tooling
 .commandcode/
@@ -67,3 +66,4 @@ start.sh
 .agents/
 packages/
 skills-lock.json
+frontend/skills-lock.json
