@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import Link from "next/link";
 import { PublicForm, Question } from "@/lib/types";
 import { submitPublicResponse } from "@/lib/api";
 import { motion, AnimatePresence } from "framer-motion";
@@ -360,9 +359,19 @@ export const RespondentFlow: React.FC<RespondentFlowProps> = ({ form }) => {
             )}
           </div>
 
-          <Link href="/" className="text-xs hover:underline" style={{ opacity: 0.3 }}>
+          <a
+            href="https://type-form-pearl.vercel.app"
+            target="_blank"
+            rel="noreferrer"
+            className="inline-block text-sm font-medium hover:underline"
+            style={{ color: theme.primary_color }}
+          >
+            Create your own Typeform &rarr;
+          </a>
+
+          <p className="text-xs" style={{ opacity: 0.3 }}>
             Powered by Typeform Clone
-          </Link>
+          </p>
         </motion.div>
       </div>
     );
