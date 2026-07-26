@@ -26,11 +26,15 @@ app = FastAPI(
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
-CORS_ORIGINS = os.getenv("CORS_ORIGINS", "http://localhost:3000,http://127.0.0.1:3000").split(",")
+CORS_ORIGINS_RAW = os.getenv(
+    "CORS_ORIGINS",
+    os.getenv("FRONTEND_URL", "http://localhost:3000")
+)
+CORS_ORIGINS = [o.strip() for o in CORS_ORIGINS_RAW.split(",") if o.strip()]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[origin.strip() for origin in CORS_ORIGINS if origin.strip()],
+    allow_origins=CORS_ORIGINS,
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE"],
     allow_headers=["Content-Type", "Authorization"],
@@ -57,14 +61,14 @@ def root():
 
 
 @app.post("/api/seed")
-def trigger_seed(request: Request, creator_id: str = "default_creator"):
+def trigger_seed(request: Request):
     host = request.client.host if request.client else ""
     if host not in ("127.0.0.1", "localhost", "::1"):
         raise HTTPException(status_code=403, detail="Seed endpoint only available locally")
     try:
-        result = seed_database(force=True, creator_id=creator_id)
+        result = seed_database(force=True)
         if result is None:
-            return {"message": "Database already has data. Use ?force=true to re-seed."}
+            return {"message": "Database already has data."}
         return {"message": "Database re-seeded successfully with realistic forms and responses!"}
-    except Exception as e:
+    except Exception:
         raise HTTPException(status_code=500, detail="Seeding failed")
