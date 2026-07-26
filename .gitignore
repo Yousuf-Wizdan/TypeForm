@@ -59,3 +59,11 @@ next-env.d.ts
 *.swp
 *.swo
 *~
+start.sh
+
+# Dev tooling
+.commandcode/
+.opencode/
+.agents/
+packages/
+skills-lock.json
