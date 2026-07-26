@@ -2,24 +2,13 @@ import { useUser } from "@clerk/nextjs";
 
 /**
  * Hook to get the current user's identifier for API calls.
- * Returns null while auth is loading, a unique user id once ready.
+ * All forms share the "default_creator" namespace so seed data
+ * is visible to every signed-in user.
  */
 export function useCurrentUserId(): string | null {
-  const { isLoaded, user } = useUser();
+  const { isLoaded } = useUser();
 
   if (!isLoaded) return null;
-
-  if (user) return user.id;
-
-  if (typeof window !== "undefined") {
-    const googleUser = localStorage.getItem("tf_google_user");
-    if (googleUser) {
-      try {
-        const parsed = JSON.parse(googleUser);
-        if (parsed.email) return parsed.email;
-      } catch {}
-    }
-  }
 
   return "default_creator";
 }
