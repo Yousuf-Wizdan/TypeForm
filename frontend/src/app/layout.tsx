@@ -22,21 +22,15 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const clerkPubKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
-
-  const content = (
-    <html lang="en" className={inter.variable} suppressHydrationWarning>
-      <body className="min-h-screen font-sans antialiased">
-        <ThemeProvider>
-          <ToastProvider>{children}</ToastProvider>
-        </ThemeProvider>
-      </body>
-    </html>
+  return (
+    <ClerkProvider>
+      <html lang="en" className={inter.variable} suppressHydrationWarning>
+        <body className="min-h-screen font-sans antialiased">
+          <ThemeProvider>
+            <ToastProvider>{children}</ToastProvider>
+          </ThemeProvider>
+        </body>
+      </html>
+    </ClerkProvider>
   );
-
-  if (clerkPubKey) {
-    return <ClerkProvider>{content}</ClerkProvider>;
-  }
-
-  return content;
 }
